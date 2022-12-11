@@ -52,15 +52,30 @@ class Actions:
         sign = (lambda a: 1 if a > 0 else -1)
         for i in range(len(self.avalible_segments2)):
             if abs(roll) < abs(self.avalible_segments2[i]):
-                roll_actions = self.actions[i] *  sign(roll) 
+                try:
+                    roll_actions = (self.actions[i] *  sign(roll), self.actions[i+1] *sign(roll))
+                except:
+                    roll_actions = (self.actions[i] *  sign(roll), self.actions[i-1] *sign(roll))
                 break
 
         for i in range(len(self.avalible_segments2)):
             if abs(pitch) < abs(self.avalible_segments2[i]):
-                pitch_actions = self.actions[i] * sign(pitch)
+                try:
+                    pitch_actions = (self.actions[i] *  sign(pitch), self.actions[i+1] *sign(pitch))
+                except:
+                    pitch_actions = (self.actions[i] *  sign(pitch), self.actions[i-1] *sign(pitch))
                 break
         
-        return [("roll", -roll_actions),("pitch", pitch_actions), ("double", -roll_actions, pitch_actions)] 
+        return [
+                ("roll", -roll_actions[0]),
+                ("pitch", pitch_actions[0]), 
+                ("roll", -roll_actions[1]),
+                ("pitch", pitch_actions[1]),
+                ("roll", roll_actions[0]),
+                ("pitch", -pitch_actions[0]), 
+                ("roll", roll_actions[1]),
+                ("pitch", -pitch_actions[1]),
+            ] 
 
 
     def reward(self):
